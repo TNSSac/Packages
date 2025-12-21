@@ -16,8 +16,12 @@ function App() {
       name: "Classic Care Package",
     },
     {
-      url: "/ThyWithPuppy.jpeg",
-      name: "Thy With Puppy",
+      url: "/TotalRefreshDark.png",
+      name: "Total Refresh",
+    },
+    {
+      url: "/ChristmasThankyou.png",
+      name: "Christmas Thank You",
     },
   ];
 
@@ -35,6 +39,12 @@ function App() {
     }, 15000); // 15,000 ms = 15s
     return () => clearInterval(interval);
   }, [packageFiles.length]);
+
+  // reload every 5 minutes:
+  useEffect(() => {
+    const id = setInterval(() => window.location.reload(), 5 * 60 * 1000);
+    return () => clearInterval(id);
+  }, []);
 
   // const [count, setCount] = useState(0);
   const screenOrientation = window.screen.orientation.type;
