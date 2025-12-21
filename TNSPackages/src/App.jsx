@@ -1,35 +1,50 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from "react";
+// import reactLogo from "./assets/react.svg";
+// import viteLogo from "/vite.svg";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [current, setCurrent] = useState(0);
+
+  const packageFiles = [
+    {
+      // public/ files are served from the site root in Vite
+      url: "/ClassicCarePackage.jpeg",
+      name: "Classic Care Package",
+    },
+    {
+      url: "/ThyWithPuppy.jpeg",
+      name: "Thy With Puppy",
+    },
+  ];
+
+  // Cycle images every 15 seconds and loop back to the start
+  useEffect(() => {
+    if (!packageFiles.length) return;
+    const interval = setInterval(() => {
+      setCurrent((c) => (c + 1) % packageFiles.length);
+    }, 15000); // 15,000 ms = 15s
+    return () => clearInterval(interval);
+  }, [packageFiles.length]);
+
+  // const [count, setCount] = useState(0);
+  const screenOrientation = window.screen.orientation.type;
+  let styling = {};
+  if (screenOrientation.includes("landscape")) {
+    styling = { width: "auto", height: "100vh" };
+  } else {
+    styling = { width: "100vw", height: "auto" };
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <img
+        src={`public/${packageFiles[current].url}`}
+        alt={packageFiles[current].name}
+        style={styling}
+      />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
