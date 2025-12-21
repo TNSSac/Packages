@@ -4,7 +4,10 @@ import { useState, useEffect } from "react";
 import "./App.css";
 
 function App() {
+  const env = "dev";
   const [current, setCurrent] = useState(0);
+
+  let imgSrc = "";
 
   const packageFiles = [
     {
@@ -17,6 +20,12 @@ function App() {
       name: "Thy With Puppy",
     },
   ];
+
+  if (env === "dev") {
+    imgSrc = `public/${packageFiles[current].url}`;
+  } else {
+    imgSrc = `/Packages/TNSPackages/dist/${packageFiles[current].url}`;
+  }
 
   // Cycle images every 15 seconds and loop back to the start
   useEffect(() => {
