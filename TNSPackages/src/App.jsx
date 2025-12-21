@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import "./App.css";
 
 function App() {
-  const env = "dev";
+  const env = "prod";
   const [current, setCurrent] = useState(0);
 
   let imgSrc = "";
@@ -47,11 +47,7 @@ function App() {
 
   return (
     <>
-      <img
-        src={`public/${packageFiles[current].url}`}
-        alt={packageFiles[current].name}
-        style={styling}
-      />
+      <img src={imgSrc} alt={packageFiles[current].name} style={styling} />
     </>
   );
 }
