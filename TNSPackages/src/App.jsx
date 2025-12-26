@@ -4,32 +4,59 @@ import { useState, useEffect } from "react";
 import "./App.css";
 
 function App() {
-  const env = "prod";
   const [current, setCurrent] = useState(0);
+  // Start with a local/public fallback so we never render an empty src
+  const [packageFiles, setPackageFiles] = useState([]);
 
   let imgSrc = "";
 
-  const packageFiles = [
-    {
-      // public/ files are served from the site root in Vite
-      url: "/ClassicCarePackage.jpeg",
-      name: "Classic Care Package",
-    },
-    {
-      url: "/TotalRefreshDark.png",
-      name: "Total Refresh",
-    },
-    {
-      url: "/ChristmasThankyou.png",
-      name: "Christmas Thank You",
-    },
-  ];
-
-  if (env === "dev") {
-    imgSrc = `public/${packageFiles[current].url}`;
-  } else {
-    imgSrc = `/Packages/TNSPackages/dist/${packageFiles[current].url}`;
+  async function fetchPostersFromGithub() {
+    const url =
+      "https://api.github.com/repos/TNSSac/Packages/contents/TNSPackages/Posters?ref=main";
+    const res = await fetch(url, {
+      headers: { Accept: "application/vnd.github.v3+json" },
+    });
+    if (!res.ok) throw new Error("Failed to fetch");
+    const items = await res.json(); // array of file objects
+    console.log("Fetched items:", items);
+    return items
+      .filter((i) => i.type === "file" && /\.(png|jpe?g|svg)$/i.test(i.name))
+      .map((i) => ({
+        url: i.download_url,
+        name: i.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " "),
+      }));
   }
+
+  // Determine image source. Use the URL as-is; GitHub download_url is absolute.
+  if (packageFiles.length) {
+    imgSrc = packageFiles[current].url;
+  }
+
+  // Try fetching a pre-generated manifest from /posters.json first,
+  // then fall back to GitHub listing if the manifest is missing or empty.
+  useEffect(() => {
+    let cancelled = false;
+
+    async function resolvePosters() {
+      try {
+        const arr = await fetchPostersFromGithub();
+        if (!cancelled && Array.isArray(arr) && arr.length) {
+          setPackageFiles(arr);
+          setCurrent(0);
+        }
+      } catch (err) {
+        // ignore - keep fallback packageFiles
+        // eslint-disable-next-line no-console
+        console.debug("fetchPostersFromGithub failed:", err?.message ?? err);
+      }
+    }
+
+    resolvePosters();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Cycle images every 15 seconds and loop back to the start
   useEffect(() => {
@@ -57,7 +84,15 @@ function App() {
 
   return (
     <>
-      <img src={imgSrc} alt={packageFiles[current].name} style={styling} />
+      {imgSrc ? (
+        <img
+          src={imgSrc}
+          alt={packageFiles[current]?.name ?? "poster"}
+          style={styling}
+        />
+      ) : (
+        <div className="no-posters">No posters found</div>
+      )}
     </>
   );
 }
