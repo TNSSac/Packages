@@ -73,11 +73,15 @@ function App() {
     return () => clearInterval(id);
   }, []);
 
+  let imgClassName = "";
+  let imgWrapClass = "";
+
   // const [count, setCount] = useState(0);
   const screenOrientation = window.screen.orientation.type;
   let styling = {};
   if (screenOrientation.includes("landscape")) {
-    styling = { width: "auto", height: "100vh" };
+    imgClassName = "rotated";
+    imgWrapClass = "rotated-wrap";
   } else {
     styling = { width: "100vw", height: "auto" };
   }
@@ -85,11 +89,14 @@ function App() {
   return (
     <>
       {imgSrc ? (
-        <img
-          src={imgSrc}
-          alt={packageFiles[current]?.name ?? "poster"}
-          style={styling}
-        />
+        <div className={imgWrapClass}>
+          <img
+            className={imgClassName}
+            src={imgSrc}
+            alt={packageFiles[current]?.name ?? "poster"}
+            style={styling}
+          />
+        </div>
       ) : (
         <div className="no-posters">No posters found</div>
       )}
