@@ -79,7 +79,10 @@ function App() {
   // const [count, setCount] = useState(0);
   const screenOrientation = window.screen.orientation.type;
   let styling = {};
-  if (screenOrientation.includes("landscape")) {
+  if (
+    screenOrientation.includes("landscape") ||
+    window.innerWidth > window.innerHeight
+  ) {
     imgClassName = "rotated";
     imgWrapClass = "rotated-wrap";
   } else {
