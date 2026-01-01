@@ -75,6 +75,8 @@ function App() {
 
   let imgClassName = "";
   let imgWrapClass = "";
+  // let imgClassName = "rotated";
+  // let imgWrapClass = "rotated-wrap";
 
   // const [count, setCount] = useState(0);
   const screenOrientation = window.screen.orientation.type;
@@ -87,6 +89,42 @@ function App() {
     imgWrapClass = "rotated-wrap";
   } else {
     styling = { width: "100vw", height: "auto" };
+  }
+
+  const isSilkBrowser = () => {
+    const ua = navigator.userAgent || "";
+    return ua.includes("Silk") || ua.includes("AmazonWebAppPlatform");
+  };
+
+  if (isSilkBrowser()) {
+    console.log("Silk browser detected!");
+    return (
+      <div
+        style={{
+          width: "100vw",
+          height: "100vh",
+          overflow: "hidden",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {imgSrc ? (
+          <img
+            src={imgSrc}
+            alt={packageFiles[current]?.name ?? "poster"}
+            style={{
+              transform: "rotate(-90deg)",
+              maxWidth: "100vh",
+              maxHeight: "100vw",
+              objectFit: "contain",
+            }}
+          />
+        ) : (
+          <div className="no-posters">No posters found</div>
+        )}
+      </div>
+    );
   }
 
   return (
