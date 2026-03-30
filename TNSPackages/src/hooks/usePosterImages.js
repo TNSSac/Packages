@@ -54,11 +54,5 @@ export function usePosterImages() {
     return () => clearInterval(interval);
   }, [packageFiles.length]);
 
-  // Reload every 5 minutes
-  useEffect(() => {
-    const id = setInterval(() => window.location.reload(), 5 * 60 * 1000);
-    return () => clearInterval(id);
-  }, []);
-
   return { packageFiles, current };
 }
