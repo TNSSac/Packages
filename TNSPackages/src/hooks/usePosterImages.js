@@ -50,7 +50,7 @@ export function usePosterImages() {
     if (!packageFiles.length) return;
     const interval = setInterval(() => {
       setCurrent((c) => (c + 1) % packageFiles.length);
-    }, 15000);
+    }, 20000);
     return () => clearInterval(interval);
   }, [packageFiles.length]);
 
