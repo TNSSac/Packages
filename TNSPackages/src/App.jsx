@@ -1,147 +1,29 @@
-import { useState, useEffect } from "react";
-// import reactLogo from "./assets/react.svg";
-// import viteLogo from "/vite.svg";
 import "./App.css";
+import TimeDateDisplay from "./components/TimeDateDisplay";
+import { useEffect, useState } from "react";
+import Container from "./components/Container";
+import PosterDisplay from "./components/PosterDisplay";
+import { usePosterImages } from "./hooks/usePosterImages";
 
 function App() {
-  const [current, setCurrent] = useState(0);
-  // Start with a local/public fallback so we never render an empty src
-  const [packageFiles, setPackageFiles] = useState([]);
+  const [showTimeDate, setShowTimeDate] = useState(true);
 
-  let imgSrc = "";
+  const { packageFiles, current } = usePosterImages();
 
-  async function fetchPostersFromGithub() {
-    const url =
-      "https://api.github.com/repos/TNSSac/Packages/contents/TNSPackages/Posters?ref=main";
-    const res = await fetch(url, {
-      headers: { Accept: "application/vnd.github.v3+json" },
-    });
-    if (!res.ok) throw new Error("Failed to fetch");
-    const items = await res.json(); // array of file objects
-    console.log("Fetched items:", items);
-    return items
-      .filter((i) => i.type === "file" && /\.(png|jpe?g|svg)$/i.test(i.name))
-      .map((i) => ({
-        url: i.download_url,
-        name: i.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " "),
-      }));
-  }
-
-  // Determine image source. Use the URL as-is; GitHub download_url is absolute.
-  if (packageFiles.length) {
-    imgSrc = packageFiles[current].url;
-  }
-
-  // Try fetching a pre-generated manifest from /posters.json first,
-  // then fall back to GitHub listing if the manifest is missing or empty.
   useEffect(() => {
-    let cancelled = false;
-
-    async function resolvePosters() {
-      try {
-        const arr = await fetchPostersFromGithub();
-        if (!cancelled && Array.isArray(arr) && arr.length) {
-          setPackageFiles(arr);
-          setCurrent(0);
-        }
-      } catch (err) {
-        // ignore - keep fallback packageFiles
-        // eslint-disable-next-line no-console
-        console.debug("fetchPostersFromGithub failed:", err?.message ?? err);
-      }
-    }
-
-    resolvePosters();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  // Cycle images every 15 seconds and loop back to the start
-  useEffect(() => {
-    if (!packageFiles.length) return;
     const interval = setInterval(() => {
-      setCurrent((c) => (c + 1) % packageFiles.length);
-    }, 15000); // 15,000 ms = 15s
+      setShowTimeDate((prev) => !prev);
+    }, 10000); // Rotate every 10 seconds
     return () => clearInterval(interval);
-  }, [packageFiles.length]);
-
-  // reload every 5 minutes:
-  useEffect(() => {
-    const id = setInterval(() => window.location.reload(), 5 * 60 * 1000);
-    return () => clearInterval(id);
   }, []);
-
-  let imgClassName = "";
-  let imgWrapClass = "";
-  // let imgClassName = "rotated";
-  // let imgWrapClass = "rotated-wrap";
-
-  // const [count, setCount] = useState(0);
-  const screenOrientation = window.screen.orientation.type;
-  let styling = {};
-  if (
-    screenOrientation.includes("landscape") ||
-    window.innerWidth > window.innerHeight
-  ) {
-    imgClassName = "rotated";
-    imgWrapClass = "rotated-wrap";
-  } else {
-    styling = { width: "100vw", height: "auto" };
-  }
-
-  const isSilkBrowser = () => {
-    const ua = navigator.userAgent || "";
-    return ua.includes("Silk") || ua.includes("AmazonWebAppPlatform");
-  };
-
-  if (isSilkBrowser()) {
-    console.log("Silk browser detected!");
-    return (
-      <div
-        style={{
-          width: "100vw",
-          height: "100vh",
-          overflow: "hidden",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        {imgSrc ? (
-          <img
-            src={imgSrc}
-            alt={packageFiles[current]?.name ?? "poster"}
-            style={{
-              transform: "rotate(-90deg)",
-              maxWidth: "100vh",
-              maxHeight: "100vw",
-              objectFit: "contain",
-            }}
-          />
-        ) : (
-          <div className="no-posters">No posters found</div>
-        )}
-      </div>
-    );
-  }
 
   return (
-    <>
-      {imgSrc ? (
-        <div className={imgWrapClass}>
-          <img
-            className={imgClassName}
-            src={imgSrc}
-            alt={packageFiles[current]?.name ?? "poster"}
-            style={styling}
-          />
-        </div>
-      ) : (
-        <div className="no-posters">No posters found</div>
+    <Container>
+      {!showTimeDate && (
+        <PosterDisplay packageFiles={packageFiles} current={current} />
       )}
-    </>
+      {showTimeDate && <TimeDateDisplay />}
+    </Container>
   );
 }
 
