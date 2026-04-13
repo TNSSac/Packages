@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { isSilkBrowser } from "../utils/utilityFunctions";
 import font from "../assets/fonts/Lavishly_Yours/LavishlyYours-Regular.ttf";
 
 const TimeDateDisplay = () => {
@@ -9,9 +10,21 @@ const TimeDateDisplay = () => {
     return () => clearInterval(timer);
   }, []);
 
-  return (
-    <div
-      style={{
+  const isSilk = isSilkBrowser();
+
+  const containerStyle = isSilk
+    ? {
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vw",
+        width: "100vh",
+        backgroundColor: "#5C4B8A",
+        color: "#FFFFFF",
+        transform: "rotate(-90deg)",
+      }
+    : {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -20,8 +33,10 @@ const TimeDateDisplay = () => {
         width: "100vw",
         backgroundColor: "#5C4B8A",
         color: "#FFFFFF",
-      }}
-    >
+      };
+
+  return (
+    <div style={containerStyle}>
       <style>
         {`
                     @font-face {
