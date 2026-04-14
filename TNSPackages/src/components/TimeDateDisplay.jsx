@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { isSilkBrowser } from "../utils/utilityFunctions";
 import font from "../assets/fonts/Lavishly_Yours/LavishlyYours-Regular.ttf";
+import qrCode from "../assets/qr-code.jpg";
 
 const TimeDateDisplay = () => {
   const [time, setTime] = useState(new Date());
@@ -10,6 +11,7 @@ const TimeDateDisplay = () => {
     return () => clearInterval(timer);
   }, []);
 
+  // const isSilk = true;
   const isSilk = isSilkBrowser();
 
   const containerStyle = isSilk
@@ -84,6 +86,7 @@ const TimeDateDisplay = () => {
         style={{
           display: "flex",
           alignItems: "center",
+          justifyContent: "center",
           gap: "10px",
           width: "100%",
         }}
@@ -98,9 +101,9 @@ const TimeDateDisplay = () => {
         </span>
       </div>
       <img
-        src="./path/to/qr-code.png"
+        src={qrCode}
         alt="QR Code"
-        style={{ width: "50px", height: "50px" }}
+        style={{ width: "100px", height: "100px" }}
       />
     </div>
   );
