@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { isSilkBrowser } from "../utils/utilityFunctions";
-import font from "../assets/fonts/Lavishly_Yours/LavishlyYours-Regular.ttf";
+import font from "../assets/fonts/Lobster/Lobster-Regular.ttf";
+// import font from "../assets/fonts/Lavishly_Yours/LavishlyYours-Regular.ttf";
 import qrCode from "../assets/qr-code.jpg";
 
 const TimeDateDisplay = () => {
