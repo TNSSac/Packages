@@ -64,13 +64,19 @@ export function usePosterImages() {
   }, []);
 
   // Cycle images every 15 seconds
-  useEffect(() => {
-    if (!packageFiles.length) return;
-    const interval = setInterval(() => {
-      setCurrent((c) => (c + 1) % packageFiles.length);
-    }, 20000);
-    return () => clearInterval(interval);
-  }, [packageFiles.length]);
+  // useEffect(() => {
+  //   if (!packageFiles.length) return;
+  //   const interval = setInterval(() => {
+  //     setCurrent((c) => (c + 1) % packageFiles.length);
+  //   }, 20000);
+  //   return () => clearInterval(interval);
+  // }, [packageFiles.length]);
 
-  return { packageFiles, current };
+  function nextPoster() {
+    if (packageFiles.length === 0) return;
+    console.log("Rotating poster, current index:", current);
+    setCurrent((c) => (c + 1) % packageFiles.length);
+  }
+
+  return { packageFiles, current, nextPoster };
 }
